@@ -44,11 +44,13 @@ def install(data_no):
     # driver.find_element_by_name("signup[email]").send_keys(f"john99{str(x)}@gmail.com")
     # driver.find_element_by_name("signup[password]").send_keys("john123")
     # driver.find_element_by_name("signup[shop_name]").send_keys(f"john99{str(x)}")
+    #signup
     driver.find_element_by_xpath('//*[@id="SignupForm_modal"]/div[6]/button').click()
     driver.implicitly_wait(10) # seconds
     try:
-        driver.find_element_by_id('MessageId_b8be')
-        driver.find_element_by_xpath('//*[@id="MessageId_b8be"]/span[2]/a').click()
+        print("========================signup failed, try to login============================")
+        # driver.find_element_by_id('MessageId_b8be')
+        driver.find_element_by_link_text('log in here').click()
         # driver.find_element_by_id('account_email').send_keys(f'john99{str(x)}@gmail.com')
         driver.find_element_by_id('account_email').send_keys(df["email"][data_no])
         time.sleep(3)
@@ -87,8 +89,8 @@ def install(data_no):
         address.send_keys(df["address"][data_no])
         city.send_keys(df["city"][data_no])
         select_province.select_by_visible_text(df["province"][data_no])
-        zip.send_keys(df["zip"][data_no])
-        phone.send_keys(df["phone"][data_no])
+        zip.send_keys(str(df["zip"][data_no]))
+        phone.send_keys(f'+{str(df["phone"][data_no])}'.replace("++","+"))
     except:
         pass
 
@@ -98,7 +100,7 @@ def install(data_no):
     except:
         pass
 
-    driver.implicitly_wait(10) # seconds
+    # time.sleep(10)
     driver.get('https://apps.shopify.com/cooki-gdpr?surface_detail=cooki&surface_inter_position=1&surface_intra_position=15&surface_type=search')
     driver.implicitly_wait(10) # seconds
     print('add app')
@@ -114,13 +116,19 @@ def install(data_no):
         driver.find_element_by_id('account_password').send_keys(Keys.ENTER)
     except:
         pass
-
+    
     print("click emails")
     driver.find_element_by_xpath('//*[@id="body-content"]/div[2]/div/div/div/div/div[2]/div/div[2]/a[1]').click()
-    print('Install app')
-    driver.find_element_by_id('proceed_cta').click()
-    print("data no {} Success".format(data_no))
-    driver.quit()
+    driver.implicitly_wait(5)
+    if driver.current_url == 'https://cooki-1.super-serverless-webhooks.com/#/notifications':
+        driver.quit()
+        print("User no {} already installed the app, skipped".format(data_no))
+    else:
+        print('Install app')
+        driver.find_element_by_id('proceed_cta').click()
+        print("data no {} Success".format(data_no))
+        driver.implicitly_wait(5)
+        driver.quit()
     #add app
     # driver.find_element_by_xpath('//*[@id="Main"]/section[1]/div/div/div/div[6]/form/input[2]')
     # driver.implicitly_wait(5) # seconds
@@ -180,12 +188,32 @@ def delete(data_no):
     print("App Deleted")
 
 
+print("Python Automation to install Plugin")
+print("*Please make sure: ")
+print("1. You entered the values in the excel file correctly")
+print("2. values with the dropdown selection should be filled exactly like the dropdown menu selection")
+print("   ie: country selecition. Singapore, in the excel file sould be filled Singapore")
+print("3. i have added some protection if the user already registered to install (in case the program stopped in the middle of execution")
+print("   or some internet problems")
+print("==================================================")
+print("Select Script to Run:")
+print("1. Create Account - Install App")
+print("2. Login existing account - Uninstall App")
+x = input("Which script you want to run?")
+if x == '1':
+    for i in range(len(df.index)):
+        install(i)
+elif x == '2':
+    for i in range(len(df.index)):
+        delete(i)
+else:
+    print("Invalid Input")
+    x = input("press any key to exit")
 
 
-# for i in range(len(df.index)):
-#     install(i)
-# install(0)
-delete(0)
+
 # print(len(df.index))
+print(df["zip"][0])
+print(df["phone"][0])
 
 # %%
