@@ -25,7 +25,7 @@ def install(data_no):
     driver.get("https://shopify.com/")
     try:
         element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[@id=\"Hero\"]/div/div[1]/div[2]/form/div/div/button"))
+            EC.presence_of_element_located((By.XPATH, '//*[@id="Hero"]/div/div[1]/div[2]/form/div/div/button'))
         )
     finally:
         pass
@@ -34,39 +34,73 @@ def install(data_no):
     # driver.find_element_by_name("signup[email]").send_keys(df["email"][data_no])
     # driver.find_element_by_name("signup[password]").send_keys(df["password"][data_no])
     # driver.find_element_by_name("signup[shop_name]").send_keys(df["name"][data_no])
-    x = 28
+    x = 34
     driver.find_element_by_name("signup[email]").send_keys(f"john99{str(x)}@gmail.com")
     driver.find_element_by_name("signup[password]").send_keys("john123")
     driver.find_element_by_name("signup[shop_name]").send_keys(f"john99{str(x)}")
     driver.find_element_by_xpath('//*[@id="SignupForm_modal"]/div[6]/button').click()
     driver.implicitly_wait(10) # seconds
-    driver.find_element_by_xpath('//*[@id="AppFrameMain"]/div/div/div/div[1]/div/footer/div/div[2]/button').click()
+    try:
+        driver.find_element_by_id('MessageId_b8be')
+        driver.find_element_by_xpath('//*[@id="MessageId_b8be"]/span[2]/a').click()
+        driver.find_element_by_id('account_email').send_keys(f'john99{str(x)}@gmail.com')
+        time.sleep(3)
+        #gives time for email verification
+        driver.find_element_by_id('account_email').send_keys(Keys.ENTER)
+        time.sleep(3)
+        driver.find_element_by_id('account_password').send_keys(f'john123' + Keys.ENTER)
+    except:
+        pass
+    
+    driver.implicitly_wait(5) # seconds
 
-    country = driver.find_element_by_name('account_setup[country]')
-    select_country = Select(country)
-    fname = driver.find_element_by_name('account_setup[firstName]')
-    lname = driver.find_element_by_name('account_setup[lastName]')
-    city = driver.find_element_by_name('account_setup[city]')
-    address = driver.find_element_by_name('account_setup[address1]')
-    province = driver.find_element_by_name('province')
-    select_province = Select(province)
-    zip = driver.find_element_by_name('account_setup[zip]')
-    phone = driver.find_element_by_name('account_setup[phone]')
+    try:
+        print('skip')
+        driver.find_element_by_xpath('//*[@id="AppFrameMain"]/div/div/div/div[1]/div/footer/div/div[2]/button').click()
 
-    select_country.select_by_visible_text("Indonesia")
-    fname.send_keys("hello")
-    lname.send_keys("there")
-    address.send_keys("this street")
-    city.send_keys("luxemburg")
-    select_province.select_by_visible_text("Lampung")
-    zip.send_keys("35111")
-    phone.send_keys("+62852271289")
+    except:
+        pass
+    
+    try:
+        country = driver.find_element_by_name('account_setup[country]')
+        select_country = Select(country)
+        fname = driver.find_element_by_name('account_setup[firstName]')
+        lname = driver.find_element_by_name('account_setup[lastName]')
+        city = driver.find_element_by_name('account_setup[city]')
+        address = driver.find_element_by_name('account_setup[address1]')
+        province = driver.find_element_by_name('province')
+        select_province = Select(province)
+        zip = driver.find_element_by_name('account_setup[zip]')
+        phone = driver.find_element_by_name('account_setup[phone]')
 
-    #proceed
-    driver.find_element_by_xpath('//*[@id="AppFrameMain"]/div/div/div/div[2]/div/footer/div[1]/div[2]/button').click()
+        print("enter form")
+        select_country.select_by_visible_text("Indonesia")
+        fname.send_keys("hello")
+        lname.send_keys("there")
+        address.send_keys("this street")
+        city.send_keys("luxemburg")
+        select_province.select_by_visible_text("Lampung")
+        zip.send_keys("35111")
+        phone.send_keys("+62852271289")
+    except:
+        pass
+
+    try:
+        print('#proceed')
+        driver.find_element_by_xpath('//*[@id="AppFrameMain"]/div/div/div/div[2]/div/footer/div[1]/div[2]/button').click()
+    except:
+        pass
+
     driver.implicitly_wait(10) # seconds
     driver.get('https://apps.shopify.com/cooki-gdpr?surface_detail=cooki&surface_inter_position=1&surface_intra_position=15&surface_type=search')
     driver.implicitly_wait(10) # seconds
+    print('add app')
+    driver.find_element_by_xpath('//*[@id="Main"]/section[1]/div/div/div/div[6]/form/input[1]').send_keys(Keys.ENTER)
+    print("click emails")
+    driver.find_element_by_xpath('//*[@id="body-content"]/div[2]/div/div/div/div/div[2]/div/div[2]/a[1]').click()
+    print('Install app')
+    driver.find_element_by_id('proceed_cta').click()
+
     #add app
     # driver.find_element_by_xpath('//*[@id="Main"]/section[1]/div/div/div/div[6]/form/input[2]')
     # driver.implicitly_wait(5) # seconds
